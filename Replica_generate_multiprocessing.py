@@ -20,17 +20,17 @@ from scipy import integrate
 
 ### User parameters
 action = 'W'
-Nt, Nx, Ny, Nz = 10, 10, 10, 10
+Nt, Nx, Ny, Nz = 6, 6, 6, 6
 beta = 5.7
-Nstart = 500
-Nend = 1500
+Nstart = 0
+Nend = 100
 Ncfg = Nend - Nstart + 1
 Nhits = 10
 n = 2
 s = 2
 u0 = 1.
-Nstart_analyze = 500 #update once thermalized
-run_number = 2  #
+Nstart_analyze = 0 #update once thermalized
+run_number = 1  #
 alphas = [0, 0.2, 0.4, 0.6, 0.8, 1]
 ensembles = [0, 1]
 
