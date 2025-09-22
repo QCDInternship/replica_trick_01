@@ -1,0 +1,24 @@
+ver 1.0
+22 Sep 2025
+Chris Bouchard
+
+* python script implementing the replica trick with quenched lattice QCD gauge fields
+* built fropm qLQCD-generate, implemented by Lukas Wystemp (U of Manchester) in summer 2025
+  - uses ReplicaLattice class 
+  - user interface via Replica_generate_multiprocessing.py
+  - implemented for Wilson action (W=Wilson) without tadpole improvement
+* helper functions and classes in gauge_latticeqcd.py and lattice_collection.py
+  includes code to update the lattices and perform measurements.
+* calculation of lattice spacing from beta follows Necco and Sommer, NPB 622, 328-346 
+  (2002), hep-lat/0108008
+* list of files and description:
+  . Replica_generate_multiprocessing.py: user interface  
+  . params.py: values of needed constants
+  . tools_v1.py: contains some useful functions
+  . gauge_latticeqcd.py: where code does the majority of the work generating a Markov chain
+  . lattice_collection.py: contains useful functions
+  . replicate_generate.py: user interface without multiprocessing
+  . action_v_cfg.py: for analysing thermalisation of lattices
+  . plaq_v_cfg.py: for analysing thermalisation of lattices
+  . replica_analysis.py: preliminary analysis of replica lattices
+  . replica_analysis_2.py: preliminary analysis of replica lattices
