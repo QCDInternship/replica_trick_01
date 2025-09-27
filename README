@@ -1,5 +1,5 @@
-ver 1.0
-22 Sep 2025
+ver 2.0
+27 Sep 2025
 Chris Bouchard
 
 * python script implementing the replica trick with quenched lattice QCD gauge fields
@@ -22,3 +22,5 @@ Chris Bouchard
   . plaq_v_cfg.py: for analysing thermalisation of lattices
   . replica_analysis.py: preliminary analysis of replica lattices
   . replica_analysis_2.py: preliminary analysis of replica lattices
+* 27 Sep 2025, ver 2.0
+  . fixed calculation of staples in gauge_latticeqcd.py to account for opposite orientation

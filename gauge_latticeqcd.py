@@ -441,7 +441,8 @@ class lattice():
     #@numba.njit
     def dS_staple(self, t, x, y, z, mu):
         # depends on current position and U over the lattice
-        tmp = np.zeros((3, 3), dtype='complex128')
+        tmp1 = np.zeros((3, 3), dtype='complex128')
+        tmp2 = np.zeros((3, 3), dtype='complex128')
         for nu in range(4):
             if nu != mu:
 
@@ -450,25 +451,31 @@ class lattice():
                 start_txyz[mu] += 1
 
                 ### staple 1
-                line1 = 1.
+                line1 = 1. + 0. * 1J
                 line1, next_txyz = self.line_move_forward(line1, start_txyz, nu)
                 line1, next_txyz = self.line_move_backward(line1, next_txyz, mu)
                 line1, next_txyz = self.line_move_backward(line1, next_txyz, nu)
-                tmp += line1
+                tmp1 += line1
                 
                 ### staple 2
-                line2 = 1.
+                line2 = 1. + 0. * 1J
                 line2, next_txyz = self.line_move_backward(line2, start_txyz, nu)
                 line2, next_txyz = self.line_move_backward(line2, next_txyz, mu)
                 line2, next_txyz = self.line_move_forward(line2, next_txyz, nu)
-                tmp += line2
+                tmp2 += line2
         
-        return tmp / self.u0**3
+        return tmp1 / self.u0**3, tmp2 / self.u0**3
     
     ### Improved action with rectangles
     def dS_staple_rectangle(self, t, x, y, z, mu):
-        plaquette = np.zeros((3, 3), dtype = 'complex128')
-        rectangle = np.zeros((3, 3), dtype = 'complex128')
+        plaquette1 = np.zeros((3, 3), dtype = 'complex128')
+        plaquette2 = np.zeros((3, 3), dtype = 'complex128')
+        rectangle1 = np.zeros((3, 3), dtype = 'complex128')
+        rectangle2 = np.zeros((3, 3), dtype = 'complex128')
+        rectangle3 = np.zeros((3, 3), dtype = 'complex128')
+        rectangle4 = np.zeros((3, 3), dtype = 'complex128')
+        rectangle5 = np.zeros((3, 3), dtype = 'complex128')
+        rectangle6 = np.zeros((3, 3), dtype = 'complex128')
 
         #loop through nu different than mu
         for nu in range(4):
@@ -477,77 +484,86 @@ class lattice():
                 start_txyz[mu] += 1
 
                 #positive plaquette
-                line = 1.
+                line = 1. + 0. * 1J
                 line, next_txyz = self.line_move_forward(line, start_txyz, nu)
                 line, next_txyz = self.line_move_backward(line, next_txyz, mu)
                 line, next_txyz = self.line_move_backward(line, next_txyz, nu)
-                plaquette += line
+                plaquette1 += line
                 
                 #negative plaquette
-                line = 1.
+                line = 1. + 0. * 1J
                 line, next_txyz = self.line_move_backward(line, start_txyz, nu)
                 line, next_txyz = self.line_move_backward(line, next_txyz, mu)
                 line, next_txyz = self.line_move_forward(line, next_txyz, nu)
-                plaquette += line
+                plaquette2 += line
                 
                 #rectangle Right right up left left down (Rrulld)
                 #capital is the link that we compute staples around -> NOT INCLUDED IN STAPLE
                 #NOTE: easier to draw individually to see what they are
-                line = 1. 
+                line = 1. + 0. * 1J
                 line, next_txyz = self.line_move_forward(line, start_txyz, mu)
                 line, next_txyz = self.line_move_forward(line, next_txyz, nu)
                 line, next_txyz = self.line_move_backward(line, next_txyz, mu)
                 line, next_txyz = self.line_move_backward(line, next_txyz, mu)
                 line, next_txyz = self.line_move_backward(line, next_txyz, nu)
-                rectangle += line
+                rectangle1 += line
                 
                 #rectangle Rulldr
-                line = 1.
+                line = 1. + 0. * 1J
                 line, next_txyz = self.line_move_forward(line, start_txyz, nu)
                 line, next_txyz = self.line_move_backward(line, next_txyz, mu)
                 line, next_txyz = self.line_move_backward(line, next_txyz, mu)
                 line, next_txyz = self.line_move_backward(line, next_txyz, nu)
                 line, next_txyz = self.line_move_forward(line, next_txyz, mu)
-                rectangle += line
+                rectangle2 += line
 
                 #Ruuldd
-                line = 1.
+                line = 1. + 0. * 1J
                 line, next_txyz = self.line_move_forward(line, start_txyz, nu)
                 line, next_txyz = self.line_move_forward(line, next_txyz, nu)
                 line, next_txyz = self.line_move_backward(line, next_txyz, mu)
                 line, next_txyz = self.line_move_backward(line, next_txyz, nu)
                 line, next_txyz = self.line_move_backward(line, next_txyz, nu)
-                rectangle += line
+                rectangle3 += line
 
                 #Rrdllu
-                line = 1.
+                line = 1. + 0. * 1J
                 line, next_txyz = self.line_move_forward(line, start_txyz, mu)
                 line, next_txyz = self.line_move_backward(line, next_txyz, nu)
                 line, next_txyz = self.line_move_backward(line, next_txyz, mu)
                 line, next_txyz = self.line_move_backward(line, next_txyz, mu)
                 line, next_txyz = self.line_move_forward(line, next_txyz, nu)
-                rectangle += line
+                rectangle4 += line
                 
                 #Rdllur
-                line = 1.
+                line = 1. + 0. * 1J
                 line, next_txyz = self.line_move_backward(line, start_txyz, nu)
                 line, next_txyz = self.line_move_backward(line, next_txyz, mu)
                 line, next_txyz = self.line_move_backward(line, next_txyz, mu)
                 line, next_txyz = self.line_move_forward(line, next_txyz, nu)
                 line, next_txyz = self.line_move_forward(line, next_txyz, mu)
-                rectangle += line
+                rectangle5 += line
                 
                 #Rddluu
-                line = 1.
+                line = 1. + 0. * 1J
                 line, next_txyz = self.line_move_backward(line, start_txyz, nu)
                 line, next_txyz = self.line_move_backward(line, next_txyz, nu)
                 line, next_txyz = self.line_move_backward(line, next_txyz, mu)
                 line, next_txyz = self.line_move_forward(line, next_txyz, nu)
                 line, next_txyz = self.line_move_forward(line, next_txyz, nu)
-                rectangle += line
+                rectangle6 += line
 
         ### Return staple corrected with rectangles
-        return (5. * plaquette / self.u0**3 / 9.) - (rectangle / self.u0**5 / 36.)  
+        #return (5. * plaquette / self.u0**3 / 9.) - (rectangle / self.u0**5 / 36.)
+
+        ### effective forward/backward rectangles
+        rectangle_fwd = rectangle1 + rectangle2 + rectangle3 + rectangle4
+        rectangle_bwd = rectangle5 + rectangle6
+
+        ans_fwd = (5. * plaquette1 / self.u0**3 / 9.) - (rectangle_fwd / self.u0**5 / 36.)
+        ans_bwd = (5. * plaquette2 / self.u0**3 / 9.) - (rectangle_bwd / self.u0**5 / 36.)
+
+        return ans_fwd, ans_bwd
 
     
     ### Difference of action. Gets link, updated link, and staple
@@ -557,16 +573,19 @@ class lattice():
 
 
     ### Difference of action at a point for fixed staple. Gets link, updated link, and staple A.
-    def deltaS(self, link, updated_link, staple):
-        return (-self.beta / 3.0 / self.u0 ) * np.real(np.trace(np.dot( (updated_link - link), staple)))
-
+    #def deltaS(self, link, updated_link, staple):
+    #    return (-self.beta / 3.0 / self.u0 ) * np.real(np.trace(np.dot( (updated_link - link), staple)))
+    def deltaS(self, link, updated_link, staple1, staple2):
+        tmp1 = np.dot( (updated_link - link), staple1)
+        tmp2 = np.conj(np.dot( (updated_link - link), staple2)).T
+        return (-self.beta / 3.0 / self.u0 ) * np.real(np.trace(tmp1 + tmp2))
 
     #@numba.njit
     def plaquette(self, t, x, y, z, mu, nu):
         Nt, Nx, Ny, Nz = self.Nt, self.Nx, self.Ny, self.Nz
         start_txyz = [t, x, y, z]
-        result = 1.
-        result, next_txyz = self.line_move_forward(1., start_txyz, mu)
+        result = 1. + 0. * 1J
+        result, next_txyz = self.line_move_forward(result, start_txyz, mu)
         result, next_txyz = self.line_move_forward(result, next_txyz, nu)
         result, next_txyz = self.line_move_backward(result, next_txyz, mu)
         result, next_txyz = self.line_move_backward(result, next_txyz, nu)
@@ -618,11 +637,11 @@ class lattice():
                             for mu in range(4):
                                 ### check which staple to use
                                 if (action == 'W') or (action == 'W_T'):
-                                    A =  self.dS_staple(t, x, y, z, mu) #standard Wilson or tadpole improved
+                                    A1, A2 =  self.dS_staple(t, x, y, z, mu) #standard Wilson or tadpole improved
                                     #(only difference is in save name of lattice since tadpole improvement is 
                                     #considered when calculating staple)
                                 elif (action == 'WR') or (action == 'WR_T'):
-                                    A = self.dS_staple_rectangle(t, x, y, z, mu) #improved action with rectangles
+                                    A1, A2 = self.dS_staple_rectangle(t, x, y, z, mu) #improved action with rectangles
                                     #Tadpole improve, else only half of O(a^2) error is cancelled.
                                 else:
                                     print("Error: Wrong action name or not implemented.")
@@ -635,7 +654,8 @@ class lattice():
                                     ### create U'
                                     Uprime = np.dot(matrix, self.U[t, x, y, z, mu, :, :])
                                     ### calculate staple
-                                    dS = self.deltaS(self.U[t, x, y, z, mu, :, :], Uprime, A)
+                                    #dS = self.deltaS(self.U[t, x, y, z, mu, :, :], Uprime, A)
+                                    dS = self.deltaS(self.U[t, x, y, z, mu, :, :], Uprime, A1, A2)
                                     ### check if U' accepted
                                     if (np.exp(-1. * dS) > np.random.uniform(0, 1)):
                                         self.U[t, x, y, z, mu, :, :] = Uprime
@@ -751,14 +771,12 @@ class ReplicaLattice:
         return [t_wrapped, x_wrapped, y_wrapped, z_wrapped]
 
     def replica_line_move_forward(self, line, txyz, direction, xcutoff):
-        #print("line move forward", txyz, direction)
         link = self.U1[txyz[0], txyz[1], txyz[2], txyz[3], direction, :, :]
         new_txyz = self.move(txyz, direction, True, xcutoff)
         new_line = np.dot(line, link)
         return new_line, new_txyz
 
     def replica_line_move_backward(self, line, txyz, direction, xcutoff):
-        #print("line move backward", txyz, direction)
         new_txyz = self.move(txyz, direction, False, xcutoff)
         link = self.U1[new_txyz[0], new_txyz[1], new_txyz[2], new_txyz[3], direction, :, :].conj().T
         new_line = np.dot(line, link)
@@ -766,7 +784,8 @@ class ReplicaLattice:
 
     def dS_staple_replica(self, txyz, mu, xcutoff):
         t, x, y, z = txyz
-        tmp = np.zeros((3, 3), dtype='complex128')
+        tmp1 = np.zeros((3, 3), dtype='complex128')
+        tmp2 = np.zeros((3, 3), dtype='complex128')
         for nu in range(4):
             if nu != mu:
                 start_txyz = [t, x, y, z]
@@ -776,15 +795,15 @@ class ReplicaLattice:
                 line1, next_txyz = self.replica_line_move_forward(line1, start_txyz, nu, xcutoff)
                 line1, next_txyz = self.replica_line_move_backward(line1, next_txyz, mu, xcutoff)
                 line1, next_txyz = self.replica_line_move_backward(line1, next_txyz, nu, xcutoff)
-                tmp += line1
+                tmp1 += line1
                 
                 line2 = np.eye(3, dtype='complex128')
                 line2, next_txyz = self.replica_line_move_backward(line2, start_txyz, nu, xcutoff)
                 line2, next_txyz = self.replica_line_move_backward(line2, next_txyz, mu, xcutoff)
                 line2, next_txyz = self.replica_line_move_forward(line2, next_txyz, nu, xcutoff)
-                tmp += line2
+                tmp2 += line2
         
-        return tmp / self.u0**3
+        return tmp1 / self.u0**3, tmp2 / self.u0**3
 
 
     def plaquette_replica(self, txyz, mu, nu, xcutoff):
@@ -818,8 +837,12 @@ class ReplicaLattice:
         S_int = (1. - alpha) * S_1 + alpha * S_2
         return S_int
 
-    def deltaS(self, link, updated_link, staple):
-        return (-self.beta / 3. / self.u0 ) * np.real(np.trace(np.dot( (updated_link - link), staple)))
+    #def deltaS(self, link, updated_link, staple):
+    #    return (-self.beta / 3. / self.u0 ) * np.real(np.trace(np.dot( (updated_link - link), staple)))
+    def deltaS(self, link, updated_link, staple1, staple2):
+        tmp1 = np.dot( (updated_link - link), staple1)
+        tmp2 = np.conj(np.dot( (updated_link - link), staple2)).T
+        return (-self.beta / 3. / self.u0 ) * np.real(np.trace(tmp1 + tmp2))
 
     def delta_S_int(self, alpha, dS_1, dS_2):
         #S_1 = S_L and S_2 = S_{L+1}
@@ -839,7 +862,6 @@ class ReplicaLattice:
         if not os.path.exists(dir_name):
             os.mkdir(dir_name)
         for config in range(Nstart, Nstart + Ncfg - 1):
-            #print(f"starting sweep {config}: {datetime.datetime.now()}")
             ### check if config exists and if so, move to next
             filename_U1 = os.path.join(dir_name, f"config_{config:01d}_U1.npy")
             if not os.path.exists(filename_U1):
@@ -850,15 +872,15 @@ class ReplicaLattice:
                             for z in range(self.Nz):
                                 for mu in range(4):
                                     txyz = [t, x, y, z]
-                                    A1 = self.dS_staple_replica(txyz, mu, xcutoff_1)
-                                    A2 = self.dS_staple_replica(txyz, mu, xcutoff_2)
+                                    A1a, A1b = self.dS_staple_replica(txyz, mu, xcutoff_1)
+                                    A2a, A2b = self.dS_staple_replica(txyz, mu, xcutoff_2)
                                     for _ in range(Nhits):
                                         r = np.random.randint(0, matrices_length)
                                         matrix = matrices[r]
                                         U = self.U1[t, x, y, z, mu, :, :]
                                         U_prime = np.dot(matrix, U)
-                                        dS_1 = self.deltaS(U, U_prime, A1)
-                                        dS_2 = self.deltaS(U, U_prime, A2)
+                                        dS_1 = self.deltaS(U, U_prime, A1a, A1b)
+                                        dS_2 = self.deltaS(U, U_prime, A2a, A2b)
                                         dS_int = self.delta_S_int(alpha, dS_1, dS_2)
                                         if (np.exp(-1. * dS_int) > np.random.uniform(0, 1)):
                                             self.U1[t, x, y, z, mu, :, :] = U_prime
