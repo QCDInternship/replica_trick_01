@@ -23,15 +23,15 @@ action = 'W'
 Nt, Nx, Ny, Nz = 6, 6, 6, 6
 beta = 5.7
 Nstart = 0
-Nend = 100
+Nend = 3000
 Ncfg = Nend - Nstart + 1
 Nhits = 10
 n = 2
 s = 2
 u0 = 1.
-Nstart_analyze = 0 #update once thermalized
+Nstart_analyze = 400 #update once thermalized
 run_number = 1  #
-alphas = [0, 0.2, 0.4, 0.6, 0.8, 1]
+alphas = [i/10 for i in range(11)]
 ensembles = [0, 1]
 
 def create_base():
@@ -212,4 +212,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

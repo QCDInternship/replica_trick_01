@@ -625,8 +625,8 @@ class lattice():
             u0_values = [self.u0]
 
         ### loop through number of configurations to be generated
-        for i in range(Ncfg - 1):
-            print('starting sweep ' + str(i) + ':  ' + str(datetime.datetime.now()))
+        for i in tqdm(range(Ncfg - 1), desc=f"Generating {Ncfg-1} Cfgs"):
+            #print('starting sweep ' + str(i) + ':  ' + str(datetime.datetime.now()))
 
             ### loop through spacetime dimensions
             for t in range(self.Nt):
@@ -861,12 +861,16 @@ class ReplicaLattice:
         txyz = np.zeros(4, dtype=int)
         if not os.path.exists(dir_name):
             os.mkdir(dir_name)
-        for config in range(Nstart, Nstart + Ncfg - 1):
+        
+        # Add a tqdm wrapper to the outer loop for overall configuration progress
+        for config in tqdm(range(Nstart, Nstart + Ncfg - 1), desc=f"Generating Cfgs (α={alpha})", unit="cfg"):
             ### check if config exists and if so, move to next
             filename_U1 = os.path.join(dir_name, f"config_{config:01d}_U1.npy")
             if not os.path.exists(filename_U1):
                 cfg_cntr += 1
-                for t in range(self.Nt):
+                
+                # Add a nested tqdm wrapper for sweep progress, with leave=False
+                for t in tqdm(range(self.Nt), desc=f"Sweeping Cfg {config}", leave=False):
                     for x in range(self.Nx):
                         for y in range(self.Ny):
                             for z in range(self.Nz):
