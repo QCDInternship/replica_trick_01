@@ -89,8 +89,8 @@ def process_alpha_ensemble(new_base_dir, cfg_start, cfg_end, alpha, ensemble):
     action_2 = []
     int_actions = []
     #CHANGED
-    xcutoff_L = s          
-    xcutoff_Lp1 = s + 1      
+    xcutoff_L = Nx - s         
+    xcutoff_Lp1 =  Nx - (s + 1)     
     #END OF CHANGE
     for cfg in range(cfg_end - cfg_start):
         U1 = np.array(collection_1[cfg], dtype=np.complex128)
@@ -145,8 +145,8 @@ def compute_action_diff(cfg_start, cfg_end, dir, alpha, ensemble):
     trace(f"[diff] Begin alpha={alpha}, ensemble={ensemble}, cfg=[{cfg_start},{cfg_end})")
 
     # define the two cutoffs here (L and L+1 in the paper)
-    xcutoff_L   = s          # this is L
-    xcutoff_Lp1 = s + 1      # this is L+1
+    xcutoff_L   = Nx - s # this is L
+    xcutoff_Lp1 = Nx - (s + 1)      # this is L+1
 
     diffs = []
     for cfg in range(cfg_start, cfg_end):
