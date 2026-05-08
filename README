@@ -1,8 +1,54 @@
 ver 2.0
 
 Subhashree 
-* tadpole_improvement/: implements tadpole-improved Wilson-action updates by calibrating \(u_0\) from the average plaquette and rescaling the gauge links.
 * Thermalisation: analyses plaquette and action histories versus configuration number to check lattice equilibration.
+
+* tadpole_improvement/: implements tadpole-improved Wilson-action updates by calibrating \(u_0\) from the average plaquette and rescaling the gauge links.
+#### Main files
+
+* `tadpole.py`
+  * Defines `measure_u0_from_plaquette(U)`, which computes `u0` from the bare
+    average plaquette of a gauge configuration.
+  * Defines `solve_u0_selfconsistent(...)`, which iterates over thermalisation
+    and measurement sweeps until the measured `u0` stabilizes within the chosen
+    tolerance.
+  * Writes calibration output under `u0_calibration/` while solving.
+
+* `Modified_Replica_generate_multiprocessing.py`
+  * Sets `USE_TADPOLE = True` for tadpole-improved runs.
+  * Uses `calibrate_u0()` to either load an existing cache file or solve for a
+    new value of `u0`.
+  * Stores the cache as
+    `u0_cache_<Nt>x<Nx>x<Ny>x<Nz>_b<int(beta*100)>.txt` so repeated runs reuse
+    the same calibrated value.
+  * Appends `_tadpole` to the output directory name, keeping tadpole-improved
+    ensembles separate from unimproved Wilson ensembles.
+  * Passes the calibrated `u0` into `ReplicaLattice(...)` for generation and
+    into the analysis routines for action differences.
+
+* `gauge_latticeqcd.py`
+  * Implements the tadpole-rescaled Wilson action through `fn_eval_point_S(...)`.
+  * Applies `u0` in the staple construction used during link updates.
+  * Carries the same `u0` into `ReplicaLattice`, so replica-boundary-condition
+    action measurements use the same improvement factor.
+
+* `action_v_cfg.py`
+  * Reads the same cached `u0` file used by the generation script.
+  * Falls back to `u0 = 1.0` only if the cache is missing, which effectively
+    disables tadpole improvement for that analysis run.
+
+* `tadpole_check.py`
+  * Provides an end-to-end consistency check.
+  * Confirms that the cached `u0` agrees with `plaquette**0.25` within the
+    configured tolerance.
+  * Compares the action evaluated with cached `u0` against the action evaluated
+    with `u0 = 1.0` and checks the expected `u0**4` scaling of the plaquette
+    part of the action.
+
+* `numba_compat.py`
+  * Allows the tadpole-improvement code to run whether or not `numba` is
+    installed.  If `numba` is unavailable, `njit` becomes a no-op decorator.
+
 
 [Project log(Google Doc)] (https://docs.google.com/document/d/1RW-2zJJJhp8L3dkro8ajPQXrClPrqJu7hCQ8YNhumcI/edit?usp=sharing)
 [Plots(Overleaf link)] (https://www.overleaf.com/read/xdthpfjnttpf#26af09)
