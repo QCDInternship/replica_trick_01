@@ -14,9 +14,7 @@ from tqdm import tqdm
 ### operator density and operator sum helper functions, topological charge included.
 
 
-#-------------Measurment code -------------------
 ### some functions are reproduced here, outside of Lattice class, to be accessible via function call.
-### - a bit redundant
 def fn_periodic_link(U, txyz, direction):
     Nt, Nx, Ny, Nz = len(U), len(U[0]), len(U[0][0]), len(U[0][0][0])
     return U[txyz[0] % Nt][txyz[1] % Nx][txyz[2] %Ny][txyz[3] % Nz][direction]
@@ -60,7 +58,6 @@ def fn_plaquette(U, t, x, y, z, mu, nu):
 
 ### Kogut et al, PRL51 (1983) 869, Quark and gluon latent heats at the deconfinement phase transtion in SU(3) gauge theory
 ### energy density: \varepsilon = \beta / Nt / Ns^3 { (\sum_{space} 1 - ReTrUUUU /3 ) - (\sum{time} 1 - ReTrUUUU /3 )}
-### this is just the leading term
 def fn_energy_density(U, beta):
     Nt, Nx, Ny, Nz = map(len, [U, U[0], U[0][0], U[0][0][0]])    
     temporal, spatial = 0., 0.
@@ -302,7 +299,6 @@ def fn_F_munu(U, t, x, y, z, mu, nu):
     return -1.0J * (np.subtract(Pmunu, Pmunu.conj().T) - np.trace(np.subtract(Pmunu, Pmunu.conj().T)) / 3.) / 2.
 
 
-#-------------Generation code -------------------
 ### function called by multiprocessor in generate script
 def generate(beta, u0, action, Nt, Nx, Ny, Nz, startcfg, Ncfg, Nhits, Nmatrix, epsilon, Nu0_step='', Nu0_avg = 10):    
     
