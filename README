@@ -1,10 +1,10 @@
 ver 2.0
 
 Subhashree 
-* Thermalisation: analyses plaquette and action histories versus configuration number to check lattice equilibration.
+### Thermalisation: analyses plaquette and action histories versus configuration number to check lattice equilibration.
 
-* tadpole_improvement/: implements tadpole-improved Wilson-action updates by calibrating \(u_0\) from the average plaquette and rescaling the gauge links.
-#### Main files
+### tadpole_improvement/: implements tadpole-improved Wilson-action updates by calibrating \(u_0\) from the average plaquette and rescaling the gauge links.
+Main files
 
 * `tadpole.py`
   * Defines `measure_u0_from_plaquette(U)`, which computes `u0` from the bare
@@ -48,6 +48,21 @@ Subhashree
 * `numba_compat.py`
   * Allows the tadpole-improvement code to run whether or not `numba` is
     installed.  If `numba` is unavailable, `njit` becomes a no-op decorator.
+
+### GPU-ready pipeline
+
+* `gpu_ready_pipeline/`
+  * Contains optional GPU-readiness utilities added separately from the production lattice-generation code.
+  * Provides GPU backend detection, layout checks, RNG-stream scaffolding, and optional measurement helpers.
+  * CPU remains the default and authoritative physics path.
+  * SU(3) configuration generation is **not** production GPU-accelerated.
+
+* `gpu_ready_pipeline/modules/`
+  * Contains helper modules for backend selection, CuPy/NumPy fallback, measurement support, array-layout checks, RNG streams, and run metadata.
+
+* `gpu_ready_pipeline/cuda_generation/`
+  * Contains experimental CUDA-generation scaffolding, if present.
+  * Not intended for physics results without separate validation.
 
 
 [Project log(Google Doc)] (https://docs.google.com/document/d/1RW-2zJJJhp8L3dkro8ajPQXrClPrqJu7hCQ8YNhumcI/edit?usp=sharing)
